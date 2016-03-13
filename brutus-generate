@@ -1,0 +1,7 @@
+#!/usr/bin/python
+
+from brutus.db import Database
+from brutus.generate import generate_all
+
+with Database() as db:
+    generate_all(db)

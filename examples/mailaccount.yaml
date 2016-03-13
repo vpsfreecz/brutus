@@ -1,0 +1,6 @@
+catalog: accounts
+id: user
+domain: example.net
+password:
+    scheme: PLAIN
+    data: testpassword

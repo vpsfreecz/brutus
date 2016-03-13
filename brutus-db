@@ -1,0 +1,6 @@
+#!/usr/bin/python
+
+from brutus.db import DatabaseCLI
+
+cli = DatabaseCLI()
+cli.run()
