@@ -3,10 +3,8 @@
 import os
 import jinja2
 
-rootdir = "output"
-
 class PostfixGenerate:
-    def __init__(self, db):
+    def __init__(self, db, rootdir="output"):
         self.db = db
         self.basedir =  os.path.join(rootdir, "postfix")
 
@@ -18,8 +16,9 @@ class PostfixGenerate:
             for item in self.db["domains"].values():
                 print("{id} none".format(**item), file=stream)
 
+
 class DovecotGenerate:
-    def __init__(self, db):
+    def __init__(self, db, rootdir="output"):
         self.db = db
         self.basedir =  os.path.join(rootdir, "dovecot")
 
