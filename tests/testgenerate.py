@@ -21,8 +21,11 @@ def test_services():
             db.add(yaml.load(stream))
         with open("examples/mailaccount.yaml") as stream:
             db.add(yaml.load(stream))
+        with open("examples/website.yaml") as stream:
+            db.add(yaml.load(stream))
 
         PostfixGenerate(db, rootdir).generate()
         DovecotGenerate(db, rootdir).generate()
+        NginxGenerate(db, rootdir).generate()
 
     subprocess.check_call(["diff", "-ru", "tmp/output", "tests/output"])

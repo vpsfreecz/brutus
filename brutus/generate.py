@@ -2,6 +2,7 @@
 
 import os
 import jinja2
+from collections import OrderedDict
 
 class PostfixGenerate:
     def __init__(self, db, rootdir="output"):
@@ -32,7 +33,7 @@ class DovecotGenerate:
                     print("{id}@{domain}:{{{password[scheme]}}}{password[data]}".format(**item), file=stream)
 
 class NginxGenerate:
-    def __init__(self, db):
+    def __init__(self, db, rootdir="output"):
         self.db = db
         self.basedir =  os.path.join(rootdir, "nginx")
 
@@ -61,6 +62,15 @@ class NginxGenerate:
             variables['id'] = variables['domain'] if variables['id'] is None else variables['id']
             variables['name'] = variables['id'] if variables['name'] is None else variables['name']
             variables['root'] = "/srv/www/" + variables['domain'] + "/" + variables['id'] + "/www" if variables['root'] is None else variables['root']
+
+            # replace headers and fastcgi-params by their ordered version; for tests
+            if variables['headers'] is not None:
+                variables['headers'] = OrderedDict(sorted(variables['headers'].items(), key=lambda t: t[0]))
+            if variables['locations'] is not None:
+                for loc in variables['locations']:
+                    if 'fastcgi_params' in loc:
+                        loc['fastcgi_params'] = OrderedDict(sorted(loc['fastcgi_params'].items(), key=lambda t: t[0]))
+
 
             filename = os.path.join(self.basedir, item['id'] + ".conf")
             os.makedirs(os.path.dirname(filename), exist_ok=True)
