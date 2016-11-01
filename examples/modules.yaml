@@ -1,0 +1,4 @@
+modules:
+    webserver: nginx
+    mailserver: postfix+dovecot
+    imserver: disabled
