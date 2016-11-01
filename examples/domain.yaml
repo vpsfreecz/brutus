@@ -1,2 +1,17 @@
 catalog: domains
 id: example.net
+services:
+    mailserver:
+        enabled: yes
+    webserver:
+        # doc/website-module.md
+        enabled: yes
+        # we probably dont need `root` and can always autogenerate it from `id`
+        #
+        # tls: manual | letsencrypt | none
+        tls: letsencrypt
+        # `tls-key`, `tls-certificate` and stuff like that should probably live
+        # in their own directory space
+        #
+        # php: yes | no
+        php: yes
