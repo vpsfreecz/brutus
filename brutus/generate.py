@@ -38,7 +38,6 @@ class NginxGenerate:
         self.basedir =  os.path.join(rootdir, "nginx")
 
     def generate(self):
-
         templateLoader = jinja2.FileSystemLoader(searchpath="templates/")
         templateEnv = jinja2.Environment(loader=templateLoader)
         nginx_site_template_name = "nginx/site.conf"

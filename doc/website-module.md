@@ -2,7 +2,11 @@
 
 ## Introduction
 
-The **website** module manages per-site Nginx configuration
+The **website** module manages per-site webserver configuration
+
+## Supported servers
+
+Currently, only nginx is supported.
 
 ## Configuration directives
 
@@ -33,7 +37,7 @@ Corresponds to nginx [`server_name`][ngx_server_name] directive.
 > Example: `root: /var/www/example.net`
 
 Specifies the root directory.
-Corresponds to nginx [`root`][ngx_root] directive
+Corresponds to nginx [`root`][ngx_root] directive.
 
 #### tls
 > Syntax: `tls: manual | letsencrypt | none`  
@@ -43,19 +47,19 @@ Specifies whether to enable SSL/TLS.
 
 #### tls_params
 
-Specifies path to needed files when `tls` is `manual`
+Specifies path to needed files when `tls` is `manual`.
 
 See also nginx documentation for
 [`ssl_certificate_key`][ngx_ssl_certificate_key],
 [`ssl_certificate`][ngx_ssl_certificate],
-[`ssl_trusted_certificate`][ngx_ssl_trusted_certificate]
+[`ssl_trusted_certificate`][ngx_ssl_trusted_certificate].
 
 
 #### php
 > Syntax: `php: true | false`  
 > Default: `php: false`
 
-Enables PHP support through PHP-FPM
+Enables PHP support through PHP-FPM.
 
 
 [ngx_server_name]: http://nginx.org/en/docs/http/ngx_http_core_module.html#server_name "Nginx: server_name"
