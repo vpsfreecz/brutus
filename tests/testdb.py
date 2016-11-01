@@ -1,20 +1,21 @@
 #!/usr/bin/python
 
-import brutus.db
+from brutus.db import Database
 
 import os
 import yaml
 
-filename = "test.shelve"
+def test_db():
+    filename = "test.shelve"
 
-if os.path.exists(filename):
-    os.unlink(filename)
-db = brutus.db.Database(filename)
+    if os.path.exists(filename):
+        os.unlink(filename)
+    db = Database(filename)
 
-def load_yaml(filename):
-    with open(filename) as stream:
-        return yaml.load(stream)
+    def load_yaml(filename):
+        with open(filename) as stream:
+            return yaml.load(stream)
 
-db.add(load_yaml("examples/domain.yaml"))
-db.add(load_yaml("examples/account.yaml"))
-print(yaml.dump(dict(db)))
+    db.add(load_yaml("examples/domain.yaml"))
+    db.add(load_yaml("examples/account.yaml"))
+    print(yaml.dump(dict(db)))
