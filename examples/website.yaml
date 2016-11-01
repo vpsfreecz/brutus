@@ -1,0 +1,33 @@
+catalog: websites
+id: example.net
+domain: example.net
+name: example.net
+root: /srv/www/www.example.net
+tls: manual
+tls_params:
+    key: /etc/nginx/ssl/example.net.key
+    certificate: /etc/nginx/ssl/example.net.cer
+    ca_certifiate: /etc/nginx/ssl/letsencrypt.ca.cer
+php: true
+headers:
+    Public-Key-Pins: 'pin-sha256="x"; pin-sha256="y"; max-age=15552000; report-uri="https://hpkp.example.net/r/default/hpkp/enforce"; includeSubdomains;'
+    Content-Security-Policy: "default-src 'self'; style-src 'unsafe-inline'"
+    X-Frame-Options: "SAMEORIGIN"
+    X-Xss-Protection: "1; mode=block"
+    X-Content-Type-Options: "nosniff"
+    Strict-Transport-Security: "max-age=15552000; includeSubdomains; preload"
+locations: 
+    -
+        path: /photos/
+        index: gallery.php
+        auth_basic: "Photos"
+        auth_basic_users:
+            - [ user1, $x$xyz/ ]
+            - [ user2, $x$abc/ ]
+        try_files: "$uri =404"
+    -
+        path: /fastcgi-app/
+        fastcgi_pass: "unix:/var/run/app-fcgi.sock"
+        fastcgi_params:
+            QUERY_STRING: $query_string
+            TEST_PARAM: "something"
