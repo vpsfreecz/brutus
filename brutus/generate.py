@@ -44,11 +44,28 @@ class NginxGenerate:
         nginx_site_template_name = "nginx/site.conf"
         template = templateEnv.get_template(nginx_site_template_name)
 
+        defaults = {
+            "id": None,
+            "name": None,
+            "root": None,
+            "tls": "letsencrypt",
+            "tls_params": None,
+            "php": "false",
+        }
+
         for item in self.db["websites"].values():
+            variables = defaults.copy()
+            variables.update(item)
+
+            # set defaults
+            variables['id'] = variables['domain'] if variables['id'] is None else variables['id']
+            variables['name'] = variables['id'] if variables['name'] is None else variables['name']
+            variables['root'] = "/srv/www/" + variables['domain'] + "/" + variables['id'] + "/www" if variables['root'] is None else variables['root']
+
             filename = os.path.join(self.basedir, item['id'] + ".conf")
             os.makedirs(os.path.dirname(filename), exist_ok=True)
             with open(filename, "w") as stream:
-                output = template.render(item)
+                output = template.render(variables)
                 print(output, file=stream)
 
 def generate_all(db):
