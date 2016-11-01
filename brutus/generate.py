@@ -51,6 +51,8 @@ class NginxGenerate:
             "tls": "letsencrypt",
             "tls_params": None,
             "php": "false",
+            "headers": None,
+            "locations": None,
         }
 
         for item in self.db["websites"].values():
