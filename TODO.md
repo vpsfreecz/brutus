@@ -73,3 +73,8 @@ Features:
 Software:
 
   * PostgreSQL
+
+## Resources
+
+  * https://gitlab.ourcloud.cz/ghormoon/random-bullshit-public/blob/master/server-management/hostingadd
+  * https://github.com/nestihacky/ansible-role-mailserver/tree/master/templates
