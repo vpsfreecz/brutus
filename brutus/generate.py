@@ -32,16 +32,20 @@ class DovecotGenerate:
                 if {"domain", "password"}.issubset(item.keys()):
                     print("{id}@{domain}:{{{password[scheme]}}}{password[data]}".format(**item), file=stream)
 
-class NginxGenerate:
+class WebserverGenerate:
     def __init__(self, db, rootdir="output"):
         self.db = db
-        self.basedir =  os.path.join(rootdir, "nginx")
+        self.basedir =  os.path.join(rootdir, "webserver")
 
     def generate(self):
         templateLoader = jinja2.FileSystemLoader(searchpath="templates/")
         templateEnv = jinja2.Environment(loader=templateLoader)
-        nginx_site_template_name = "nginx/site.conf"
-        template = templateEnv.get_template(nginx_site_template_name)
+
+        platforms = [ 'nginx', 'apache' ];
+        template = {};
+
+        for platform in platforms:
+            template[platform] = templateEnv.get_template(platform + '/site.conf')
 
         defaults = {
             "id": None,
@@ -71,14 +75,14 @@ class NginxGenerate:
                     if 'fastcgi_params' in loc:
                         loc['fastcgi_params'] = OrderedDict(sorted(loc['fastcgi_params'].items(), key=lambda t: t[0]))
 
-
-            filename = os.path.join(self.basedir, item['id'] + ".conf")
-            os.makedirs(os.path.dirname(filename), exist_ok=True)
-            with open(filename, "w") as stream:
-                output = template.render(variables)
-                print(output, file=stream)
+            for platform in platforms:
+                filename = os.path.join(self.basedir, platform, item['id'] + ".conf")
+                os.makedirs(os.path.dirname(filename), exist_ok=True)
+                with open(filename, "w") as stream:
+                    output = template[platform].render(variables)
+                    print(output, file=stream)
 
 def generate_all(db):
     PostfixGenerate(db).generate()
     DovecotGenerate(db).generate()
-    NginxGenerate(db).generate()
+    WebserverGenerate(db).generate()
