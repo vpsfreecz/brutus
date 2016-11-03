@@ -18,6 +18,12 @@ def cleanup():
     shutil.rmtree(rootdir)
     os.makedirs(rootdir)
 
+def test_empty():
+    cleanup()
+
+    with Database(filename) as db:
+        generate_all(db, rootdir)
+
 def test_services():
     cleanup()
 

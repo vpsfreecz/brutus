@@ -5,9 +5,18 @@ import shelve
 import yaml
 import collections.abc
 
+CATALOGS = [
+    "domains",
+    "accounts",
+    "websites"
+]
+
 class Database(collections.abc.Mapping):
     def __init__(self, filename="db.shelve"):
         self._db = shelve.open(filename, writeback=True)
+
+        for key in CATALOGS:
+            self._db.setdefault(key, {})
 
     def add(self, item):
         self._db.setdefault(item['catalog'], {})[item['id']] = item
