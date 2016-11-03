@@ -4,17 +4,22 @@ import os, shutil, subprocess
 import yaml
 
 from brutus.db import Database
-from brutus.generate import *
+from brutus.generate import generate_all
 
 tmpdir = "tmp"
 filename = os.path.join(tmpdir, "test.pickle")
 rootdir = os.path.join(tmpdir, "output")
 
-def test_services():
-    if os.path.exists(tmpdir):
-        shutil.rmtree(tmpdir)
-    os.makedirs(tmpdir)
+def cleanup():
+    try:
+        os.remove(filename)
+    except FileNotFoundError:
+        pass
+    shutil.rmtree(rootdir)
     os.makedirs(rootdir)
+
+def test_services():
+    cleanup()
 
     with Database(filename) as db:
         with open("examples/domain.yaml") as stream:
@@ -26,8 +31,6 @@ def test_services():
         with open("examples/website-minimal.yaml") as stream:
             db.add(yaml.load(stream))
 
-        PostfixGenerate(db, rootdir).generate()
-        DovecotGenerate(db, rootdir).generate()
-        WebserverGenerate(db, rootdir).generate()
+        generate_all(db, rootdir)
 
     subprocess.check_call(["diff", "-ru", "tmp/output", "tests/output"])

@@ -5,7 +5,7 @@ import jinja2
 from collections import OrderedDict
 
 class PostfixGenerate:
-    def __init__(self, db, rootdir="output"):
+    def __init__(self, db, rootdir):
         self.db = db
         self.basedir =  os.path.join(rootdir, "postfix")
 
@@ -19,7 +19,7 @@ class PostfixGenerate:
 
 
 class DovecotGenerate:
-    def __init__(self, db, rootdir="output"):
+    def __init__(self, db, rootdir):
         self.db = db
         self.basedir =  os.path.join(rootdir, "dovecot")
 
@@ -33,7 +33,7 @@ class DovecotGenerate:
                     print("{id}@{domain}:{{{password[scheme]}}}{password[data]}".format(**item), file=stream)
 
 class WebserverGenerate:
-    def __init__(self, db, rootdir="output"):
+    def __init__(self, db, rootdir):
         self.db = db
         self.basedir =  os.path.join(rootdir, "webserver")
 
@@ -82,7 +82,7 @@ class WebserverGenerate:
                     output = template[platform].render(variables)
                     print(output, file=stream)
 
-def generate_all(db):
-    PostfixGenerate(db).generate()
-    DovecotGenerate(db).generate()
-    WebserverGenerate(db).generate()
+def generate_all(db, rootdir):
+    PostfixGenerate(db, rootdir).generate()
+    DovecotGenerate(db, rootdir).generate()
+    WebserverGenerate(db, rootdir).generate()
