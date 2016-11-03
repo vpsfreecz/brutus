@@ -91,6 +91,31 @@ class WebserverGenerate(Generate):
                     print(output, file=stream)
 
 
+@register
+class BindGenerate(Generate):
+    def generate(self):
+        basedir = os.path.join(self.rootdir, "bind")
+
+        os.makedirs(basedir, exist_ok=True)
+        for name, domain in sorted(self.db["domains"].items()):
+            filename = os.path.join(basedir, name)
+            services = domain["services"]
+
+            if "dns" not in services:
+                continue
+            if not services["dns"]["enabled"]:
+                continue
+            with open(filename, "w") as stream:
+                for name, data in sorted(services["dns"]["records"].items()):
+                    for typ, values in sorted(data.items()):
+                        for value in sorted(values):
+                            self.add_rr(stream, typ, name, value)
+
+    @staticmethod
+    def add_rr(stream, typ, name, value):
+        print("{name} {typ} {value}".format(**vars()), file=stream)
+
+
 def generate_all(db, rootdir):
     for cls in registered_classes:
         cls(db, rootdir).generate()

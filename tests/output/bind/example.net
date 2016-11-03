@@ -1,0 +1,11 @@
+@ NS a.ns.example.net.
+@ NS b.ns.example.net.
+@ SOA master.ns hostmaster 0000000000 1d 15m 4w 10m
+_xmpp-server._tcp SRV 10 0 5269 server
+a.ns A 192.0.2.1
+a.ns AAAA 2001:db8::1
+b.ns A 192.0.2.2
+b.ns AAAA 2001:db8::2
+server A 192.0.2.3
+server AAAA 2001:db8::3
+www CNAME server
