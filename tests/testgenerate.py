@@ -39,4 +39,4 @@ def test_services():
 
         generate_all(db, rootdir)
 
-    subprocess.check_call(["diff", "-ru", "tmp/output", "tests/output"])
+    subprocess.check_call(["diff", "-ru", rootdir, "tests/output"])

@@ -4,13 +4,24 @@ import os
 import jinja2
 from collections import OrderedDict
 
-class PostfixGenerate:
+registered_classes = []
+
+def register(cls):
+    registered_classes.append(cls)
+    return cls
+
+
+class Generate:
     def __init__(self, db, rootdir):
         self.db = db
-        self.basedir =  os.path.join(rootdir, "postfix")
+        self.rootdir = rootdir
 
+
+@register
+class PostfixGenerate(Generate):
     def generate(self):
-        filename = os.path.join(self.basedir, "domains")
+        basedir = os.path.join(self.rootdir, "postfix")
+        filename = os.path.join(basedir, "domains")
 
         os.makedirs(os.path.dirname(filename), exist_ok=True)
         with open(filename, "w") as stream:
@@ -18,13 +29,11 @@ class PostfixGenerate:
                 print("{id} none".format(**item), file=stream)
 
 
-class DovecotGenerate:
-    def __init__(self, db, rootdir):
-        self.db = db
-        self.basedir =  os.path.join(rootdir, "dovecot")
-
+@register
+class DovecotGenerate(Generate):
     def generate(self):
-        filename = os.path.join(self.basedir, "passwd")
+        basedir = os.path.join(self.rootdir, "dovecot")
+        filename = os.path.join(basedir, "passwd")
 
         os.makedirs(os.path.dirname(filename), exist_ok=True)
         with open(filename, "w") as stream:
@@ -32,12 +41,11 @@ class DovecotGenerate:
                 if {"domain", "password"}.issubset(item.keys()):
                     print("{id}@{domain}:{{{password[scheme]}}}{password[data]}".format(**item), file=stream)
 
-class WebserverGenerate:
-    def __init__(self, db, rootdir):
-        self.db = db
-        self.basedir =  os.path.join(rootdir, "webserver")
 
+@register
+class WebserverGenerate(Generate):
     def generate(self):
+        basedir = os.path.join(self.rootdir, "webserver")
         templateLoader = jinja2.FileSystemLoader(searchpath="templates/")
         templateEnv = jinja2.Environment(loader=templateLoader)
 
@@ -76,13 +84,13 @@ class WebserverGenerate:
                         loc['fastcgi_params'] = OrderedDict(sorted(loc['fastcgi_params'].items(), key=lambda t: t[0]))
 
             for platform in platforms:
-                filename = os.path.join(self.basedir, platform, item['id'] + ".conf")
+                filename = os.path.join(basedir, platform, item['id'] + ".conf")
                 os.makedirs(os.path.dirname(filename), exist_ok=True)
                 with open(filename, "w") as stream:
                     output = template[platform].render(variables)
                     print(output, file=stream)
 
+
 def generate_all(db, rootdir):
-    PostfixGenerate(db, rootdir).generate()
-    DovecotGenerate(db, rootdir).generate()
-    WebserverGenerate(db, rootdir).generate()
+    for cls in registered_classes:
+        cls(db, rootdir).generate()
