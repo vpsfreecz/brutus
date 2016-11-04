@@ -134,6 +134,23 @@ class BindGenerate(Generate):
         print("{name} {typ} {value}".format(**vars()), file=stream)
 
 
+@register
+class KnotGenerate(Generate):
+    def generate(self):
+        basedir = os.path.join(self.rootdir, "knot")
+        templateLoader = jinja2.FileSystemLoader(searchpath="templates/")
+        templateEnv = jinja2.Environment(loader=templateLoader, lstrip_blocks=False, trim_blocks=False)
+
+        template = templateEnv.get_template('knot/knot.conf')
+        variables = {}
+        variables['domains'] = self.db["domains"]
+        filename = os.path.join(basedir, "knot.conf")
+        os.makedirs(os.path.dirname(filename), exist_ok=True)
+        with open(filename, "w") as stream:
+            output = template.render(variables)
+            print(output, file=stream)
+
+
 def generate_all(db, rootdir):
     for cls in registered_classes:
         cls(db, rootdir).generate()

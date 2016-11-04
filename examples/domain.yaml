@@ -17,6 +17,7 @@ services:
         php: yes
     dns:
         enabled: yes
+        dnssec: yes
         records:
             "@":
                 SOA:
