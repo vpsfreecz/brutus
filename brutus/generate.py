@@ -92,7 +92,7 @@ class WebserverGenerate(Generate):
 
         # copy over configuration files
         configs = {}
-        configs['nginx'] = [ 'nginx.conf' ]
+        configs['nginx'] = [ 'nginx.conf', 'fastcgi_params' ]
         configs['apache'] = [ 'apache2.conf']
 
         # TODO: load global configuration variables from storage
