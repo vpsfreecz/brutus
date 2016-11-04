@@ -84,11 +84,29 @@ class WebserverGenerate(Generate):
                         loc['fastcgi_params'] = OrderedDict(sorted(loc['fastcgi_params'].items(), key=lambda t: t[0]))
 
             for platform in platforms:
-                filename = os.path.join(basedir, platform, item['id'] + ".conf")
+                filename = os.path.join(basedir, platform, 'conf.d',  item['id'] + ".conf")
                 os.makedirs(os.path.dirname(filename), exist_ok=True)
                 with open(filename, "w") as stream:
                     output = template[platform].render(variables)
                     print(output, file=stream)
+
+        # copy over configuration files
+        configs = {}
+        configs['nginx'] = [ 'nginx.conf' ]
+        configs['apache'] = [ 'apache2.conf']
+
+        # TODO: load global configuration variables from storage
+        variables = {}
+
+        for platform in platforms:
+            for configfile in configs[platform]:
+                templ = templateEnv.get_template(os.path.join(platform, configfile))
+                filename = os.path.join(basedir, platform, configfile)
+                os.makedirs(os.path.dirname(filename), exist_ok=True)
+                with open(filename, "w") as stream:
+                    output = templ.render(variables)
+                    print(output, file=stream)
+
 
 
 @register
