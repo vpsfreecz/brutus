@@ -2,7 +2,6 @@
 
 import os
 import jinja2
-from collections import OrderedDict
 
 registered_classes = []
 
@@ -74,14 +73,6 @@ class WebserverGenerate(Generate):
             variables['id'] = variables['domain'] if variables['id'] is None else variables['id']
             variables['name'] = variables['id'] if variables['name'] is None else variables['name']
             variables['root'] = "/srv/www/" + variables['domain'] + "/" + variables['id'] + "/www" if variables['root'] is None else variables['root']
-
-            # replace headers and fastcgi-params by their ordered version; for tests
-            if variables['headers'] is not None:
-                variables['headers'] = OrderedDict(sorted(variables['headers'].items(), key=lambda t: t[0]))
-            if variables['locations'] is not None:
-                for loc in variables['locations']:
-                    if 'fastcgi_params' in loc:
-                        loc['fastcgi_params'] = OrderedDict(sorted(loc['fastcgi_params'].items(), key=lambda t: t[0]))
 
             for platform in platforms:
                 filename = os.path.join(basedir, platform, 'conf.d',  item['id'] + ".conf")
