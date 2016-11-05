@@ -1,6 +1,8 @@
 #!/usr/bin/python
 
-import os, shutil, subprocess
+import os
+import shutil
+import subprocess
 import yaml
 
 from brutus.db import Database
@@ -10,6 +12,7 @@ tmpdir = "tmp"
 filename = os.path.join(tmpdir, "test.pickle")
 rootdir = os.path.join(tmpdir, "output")
 
+
 def cleanup():
     try:
         os.remove(filename)
@@ -18,11 +21,13 @@ def cleanup():
     shutil.rmtree(rootdir)
     os.makedirs(rootdir)
 
+
 def test_empty():
     cleanup()
 
     with Database(filename) as db:
         generate_all(db, rootdir)
+
 
 def test_services():
     cleanup()

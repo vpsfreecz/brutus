@@ -11,6 +11,7 @@ CATALOGS = [
     "websites"
 ]
 
+
 class Database(collections.abc.Mapping):
     def __init__(self, filename="db.shelve"):
         self._db = shelve.open(filename, writeback=True)
