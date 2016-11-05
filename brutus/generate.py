@@ -5,7 +5,6 @@ import jinja2
 
 registered_classes = []
 
-
 def register(cls):
     registered_classes.append(cls)
     return cls
@@ -49,8 +48,8 @@ class WebserverGenerate(Generate):
         templateLoader = jinja2.FileSystemLoader(searchpath="templates/")
         templateEnv = jinja2.Environment(loader=templateLoader)
 
-        platforms = ['nginx', 'apache']
-        template = {}
+        platforms = [ 'nginx', 'apache' ];
+        template = {};
 
         for platform in platforms:
             template[platform] = templateEnv.get_template(platform + '/site.conf')
@@ -73,8 +72,7 @@ class WebserverGenerate(Generate):
             # set defaults
             variables['id'] = variables['domain'] if variables['id'] is None else variables['id']
             variables['name'] = variables['id'] if variables['name'] is None else variables['name']
-            variables['root'] = "/srv/www/" + variables['domain'] + "/" + variables['id']
-            + "/www" if variables['root'] is None else variables['root']
+            variables['root'] = "/srv/www/" + variables['domain'] + "/" + variables['id'] + "/www" if variables['root'] is None else variables['root']
 
             for platform in platforms:
                 filename = os.path.join(basedir, platform, 'conf.d',  item['id'] + ".conf")
@@ -85,8 +83,8 @@ class WebserverGenerate(Generate):
 
         # copy over configuration files
         configs = {}
-        configs['nginx'] = ['nginx.conf', 'fastcgi_params']
-        configs['apache'] = ['apache2.conf']
+        configs['nginx'] = [ 'nginx.conf', 'fastcgi_params' ]
+        configs['apache'] = [ 'apache2.conf']
 
         # TODO: load global configuration variables from storage
         variables = {}
@@ -99,6 +97,7 @@ class WebserverGenerate(Generate):
                 with open(filename, "w") as stream:
                     output = templ.render(variables)
                     print(output, file=stream)
+
 
 
 @register

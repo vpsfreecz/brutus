@@ -5,7 +5,6 @@ from brutus.db import Database
 import os
 import yaml
 
-
 def test_db():
     filename = "test.shelve"
 
