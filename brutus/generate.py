@@ -52,7 +52,7 @@ class WebserverGenerate(Generate):
         template = {};
 
         for platform in platforms:
-            template[platform] = templateEnv.get_template(platform + '/site.conf')
+            template[platform] = templateEnv.get_template(platform + '/site.conf.j2')
 
         defaults = {
             "id": None,
@@ -91,7 +91,7 @@ class WebserverGenerate(Generate):
 
         for platform in platforms:
             for configfile in configs[platform]:
-                templ = templateEnv.get_template(os.path.join(platform, configfile))
+                templ = templateEnv.get_template(os.path.join(platform, configfile + ".j2"))
                 filename = os.path.join(basedir, platform, configfile)
                 os.makedirs(os.path.dirname(filename), exist_ok=True)
                 with open(filename, "w") as stream:
@@ -132,7 +132,7 @@ class KnotGenerate(Generate):
         templateLoader = jinja2.FileSystemLoader(searchpath="templates/")
         templateEnv = jinja2.Environment(loader=templateLoader, lstrip_blocks=False, trim_blocks=False)
 
-        template = templateEnv.get_template('knot/knot.conf')
+        template = templateEnv.get_template('knot/knot.conf.j2')
         variables = {}
         variables['domains'] = self.db["domains"]
         filename = os.path.join(basedir, "knot.conf")
