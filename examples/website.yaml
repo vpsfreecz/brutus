@@ -9,7 +9,7 @@ tls_params:
     key: /etc/nginx/ssl/example.net.key
     certificate: /etc/nginx/ssl/example.net.cer
     ca_certifiate: /etc/nginx/ssl/letsencrypt.ca.cer
-php: true
+php: false
 headers:
     Public-Key-Pins: "'pin-sha256=\"x\"; pin-sha256=\"y\"; max-age=15552000; report-uri=\"https://hpkp.example.net/r/default/hpkp/enforce\"; includeSubdomains;'"
     Content-Security-Policy: "\"default-src 'self'; style-src 'unsafe-inline'\""

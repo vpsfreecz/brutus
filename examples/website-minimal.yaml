@@ -1,6 +1,6 @@
 catalog: websites
 domain: example.net
 id: mini.example.net
-php: yes
+php: no
 http2: no
 tls: none

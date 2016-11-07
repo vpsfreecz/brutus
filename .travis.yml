@@ -6,6 +6,10 @@ addons:
         packages:
             - nginx
             - apache2
+    hosts:
+        - example.net
+        - mini.example.net
+        - www.example.net
 python:
   - "2.7"
   - "3.4"
