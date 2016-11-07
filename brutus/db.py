@@ -3,7 +3,7 @@
 import argparse
 import shelve
 import yaml
-import collections.abc
+import collections
 
 CATALOGS = [
     "domains",
@@ -11,7 +11,7 @@ CATALOGS = [
     "websites"
 ]
 
-class Database(collections.abc.Mapping):
+class Database(collections.Mapping):
     def __init__(self, filename="db.shelve"):
         self._db = shelve.open(filename, writeback=True)
 
