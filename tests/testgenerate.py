@@ -10,19 +10,23 @@ tmpdir = "tmp"
 filename = os.path.join(tmpdir, "test.pickle")
 rootdir = os.path.join(tmpdir, "output")
 
+
 def cleanup():
     try:
         os.remove(filename)
     except FileNotFoundError:
         pass
-    shutil.rmtree(rootdir)
+    os.makedirs(tmpdir, exist_ok=True)
+    shutil.rmtree(rootdir,ignore_errors=True)
     os.makedirs(rootdir)
+
 
 def test_empty():
     cleanup()
 
     with Database(filename) as db:
         generate_all(db, rootdir)
+
 
 def test_services():
     cleanup()
