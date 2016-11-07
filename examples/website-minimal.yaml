@@ -2,3 +2,4 @@ catalog: websites
 domain: example.net
 id: mini.example.net
 php: yes
+http2: no

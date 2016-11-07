@@ -72,6 +72,7 @@ class WebserverGenerate(Generate):
             "php": "false",
             "headers": None,
             "locations": None,
+            "http2": "true",
         }
 
         for item in self.db["websites"].values():

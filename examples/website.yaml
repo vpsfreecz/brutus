@@ -3,6 +3,7 @@ id: example.net
 domain: example.net
 name: example.net
 root: /srv/www/www.example.net
+http2: false
 tls: manual
 tls_params:
     key: /etc/nginx/ssl/example.net.key
