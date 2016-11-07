@@ -5,6 +5,8 @@ import yaml
 
 from brutus.db import Database
 from brutus.generate import generate_all
+from brutus import utils
+
 
 tmpdir = "tmp"
 filename = os.path.join(tmpdir, "test.pickle")
@@ -16,9 +18,9 @@ def cleanup():
         os.remove(filename)
     except OSError:
         pass
-    os.makedirs(tmpdir, exist_ok=True)
-    shutil.rmtree(rootdir,ignore_errors=True)
-    os.makedirs(rootdir)
+    utils.makedirs(tmpdir)
+    shutil.rmtree(rootdir, ignore_errors=True)
+    utils.makedirs(rootdir)
 
 
 def test_empty():

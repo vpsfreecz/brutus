@@ -3,7 +3,8 @@
 import os
 import argparse
 import shutil
-import errno
+from . import utils
+
 
 def deploy(rootdir, destdir, filesystem=False):
     for entry in os.listdir(rootdir):
@@ -14,11 +15,7 @@ def deploy(rootdir, destdir, filesystem=False):
                 filesystem=True)
         else:
             print(os.path.join(rootdir, entry) + ' -> ' + os.path.join(destdir, entry))
-            try:
-                os.makedirs(destdir)
-            except OSError as e:
-                if e.errno != errno.EEXIST:
-                    raise
+            utils.makedirs(destdir)
             shutil.copy(os.path.join(rootdir, entry), os.path.join(destdir, entry))
 
 
