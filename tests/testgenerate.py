@@ -14,7 +14,7 @@ rootdir = os.path.join(tmpdir, "output")
 def cleanup():
     try:
         os.remove(filename)
-    except FileNotFoundError:
+    except OSError:
         pass
     os.makedirs(tmpdir, exist_ok=True)
     shutil.rmtree(rootdir,ignore_errors=True)
