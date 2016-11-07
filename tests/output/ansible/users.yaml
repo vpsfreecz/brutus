@@ -1,0 +1,6 @@
+- hosts: local
+  tasks:
+  - {name: example.net-cgi, user: name="example.net-cgi"}
+  - {name: mini.example.net-cgi, user: name="mini.example.net-cgi"}
+  user: root
+

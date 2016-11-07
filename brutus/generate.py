@@ -4,6 +4,7 @@ from __future__ import print_function
 
 import os
 import jinja2
+import yaml
 
 from . import utils
 
@@ -145,6 +146,25 @@ class KnotGenerate(Generate):
         with open(filename, "w") as stream:
             output = template.render(variables)
             print(output, file=stream)
+
+
+@register
+class AnsibleUsersGenerate(Generate):
+    """Generate ansible playbook for local users.
+    Currently only users for CGI are created automatically"""
+    def generate(self):
+        basedir = os.path.join(self.rootdir, "ansible")
+        filename = os.path.join(basedir, "users.yaml")
+        websites = (self.db["websites"][site] for site in self.db["websites"])
+        users = (site['id'] + '-cgi' for site in websites)
+        playbook = [{
+            'hosts': 'local',
+            'user': 'root',
+            'tasks': [{'name': user, 'user': 'name="' + user + '"'} for user in sorted(users)]
+        }]
+        utils.makedirs(os.path.dirname(filename))
+        with open(filename, "w") as stream:
+            print(yaml.dump(playbook), file=stream)
 
 
 def generate_all(db, rootdir):
