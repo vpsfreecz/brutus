@@ -1,0 +1,5 @@
+catalog: nodes
+id: local
+os: debian
+modules:
+    webserver: nginx

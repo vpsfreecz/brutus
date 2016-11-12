@@ -155,14 +155,42 @@ class AnsibleUsersGenerate(Generate):
     def generate(self):
         basedir = os.path.join(self.rootdir, "ansible")
         filename = os.path.join(basedir, "users.yaml")
-        websites = (self.db["websites"][site] for site in self.db["websites"])
-        users = (site['id'] + '-cgi' for site in websites)
+        users = (site['id'] + '-cgi' for site in self.db["websites"].values())
         playbook = [{
             'hosts': 'local',
             'user': 'root',
             'tasks': [{'name': user, 'user': 'name="' + user + '"'} for user in sorted(users)]
         }]
         utils.makedirs(os.path.dirname(filename))
+        with open(filename, "w") as stream:
+            print(yaml.dump(playbook), file=stream)
+
+
+@register
+class AnsiblePackagesGenerate(Generate):
+    """Generate ansible playbook that manages required software packages"""
+    def generate(self):
+        basedir = os.path.join(self.rootdir, "ansible")
+        filename = os.path.join(basedir, "packages.yaml")
+        packages = frozenset(['nginx', 'apache2', 'postfix', 'dovecot'])
+        nodes = self.db['nodes'].values()
+        aptnodes = [node for node in nodes if node['os'] in frozenset(['debian', 'ubuntu'])]
+        playbook = [{
+            'hosts': node['id'],
+            'user': 'root',
+            'tasks': [
+                {
+                    'name': 'install package ' + module,
+                    'apt': {
+                        'name': module,
+                        'state': 'present',
+                    }
+                }
+                for module in node['modules'].values() if module in packages
+            ],
+            }
+            for node in sorted(aptnodes)
+        ]
         with open(filename, "w") as stream:
             print(yaml.dump(playbook), file=stream)
 

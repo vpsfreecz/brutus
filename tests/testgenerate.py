@@ -42,6 +42,8 @@ def test_services():
             db.add(yaml.load(stream))
         with open("examples/website-minimal.yaml") as stream:
             db.add(yaml.load(stream))
+        with open("examples/node-local.yaml") as stream:
+            db.add(yaml.load(stream))
 
         generate_all(db, rootdir)
 

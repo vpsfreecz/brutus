@@ -1,0 +1,6 @@
+- hosts: local
+  tasks:
+  - apt: {name: nginx, state: present}
+    name: install package nginx
+  user: root
+
