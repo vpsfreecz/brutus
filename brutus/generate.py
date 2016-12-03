@@ -26,6 +26,20 @@ class Generate:
         self.db = db
         self.rootdir = rootdir
 
+    def generate_file(self, name, **kargs):
+        template = "{}/{}.j2".format(self.name, name)
+        target = os.path.join(self.rootdir, self.name, name)
+
+        output = self.template_env.get_template(template).render(**kargs)
+        # jinja2 seems to sometimes drop the final newline before end of file.
+        if not output.endswith("\n"):
+            output += "\n"
+
+        utils.makedirs(os.path.dirname(target))
+        print(target)
+        with open(target, "w") as stream:
+            stream.write(output)
+
 
 @register
 class PostfixGenerate(Generate):
