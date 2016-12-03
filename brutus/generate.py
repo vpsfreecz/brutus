@@ -15,6 +15,8 @@ def register(cls):
 
 
 class Generate:
+    template_env = jinja2.Environment(loader=jinja2.FileSystemLoader(searchpath="templates"))
+
     def __init__(self, db, rootdir):
         self.db = db
         self.rootdir = rootdir
@@ -49,14 +51,12 @@ class DovecotGenerate(Generate):
 class WebserverGenerate(Generate):
     def generate(self):
         basedir = os.path.join(self.rootdir)
-        templateLoader = jinja2.FileSystemLoader(searchpath="templates/")
-        templateEnv = jinja2.Environment(loader=templateLoader)
 
         platforms = [ 'nginx', 'apache' ];
         template = {};
 
         for platform in platforms:
-            template[platform] = templateEnv.get_template(platform + '/site.conf.j2')
+            template[platform] = self.template_env.get_template(platform + '/site.conf.j2')
 
         defaults = {
             "id": None,
@@ -96,7 +96,7 @@ class WebserverGenerate(Generate):
 
         for platform in platforms:
             for configfile in configs[platform]:
-                templ = templateEnv.get_template(os.path.join(platform, configfile + ".j2"))
+                templ = self.template_env.get_template(os.path.join(platform, configfile + ".j2"))
                 filename = os.path.join(basedir, platform, "etc", platform, configfile)
                 utils.makedirs(os.path.dirname(filename))
                 with open(filename, "w") as stream:
@@ -135,9 +135,8 @@ class KnotGenerate(Generate):
     def generate(self):
         basedir = os.path.join(self.rootdir, "knot", "etc", "knot")
         templateLoader = jinja2.FileSystemLoader(searchpath="templates/")
-        templateEnv = jinja2.Environment(loader=templateLoader, lstrip_blocks=False, trim_blocks=False)
 
-        template = templateEnv.get_template('knot/knot.conf.j2')
+        template = self.template_env.get_template('knot/knot.conf.j2')
         variables = {}
         variables['domains'] = self.db["domains"]
         filename = os.path.join(basedir, "knot.conf")
