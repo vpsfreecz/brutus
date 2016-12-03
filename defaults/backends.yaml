@@ -1,1 +1,19 @@
-{}
+mailserver:
+    postfix:
+        links:
+            - source: main.cf
+              target: /etc/postfix/main.cf
+            - source: domains
+              target: /etc/postfix/domains
+            - source: aliases
+              target: /etc/postfix/aliases
+            - source: clients
+              target: /etc/postfix/clients
+            - source: senders
+              target: /etc/postfix/senders
+    dovecot:
+        links:
+            - source: dovecot.conf
+              target: /etc/dovecot/dovecot.conf
+            - source: passwd
+              target: /etc/dovecot/passwd

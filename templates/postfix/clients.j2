@@ -1,0 +1,5 @@
+# SMTP client access list for postfix generated from Brutus database
+
+{% for client in clients %}
+{{ client.host }} {{ client.result }}
+{% endfor %}

@@ -26,11 +26,16 @@ class Generate:
         self.db = db
         self.rootdir = rootdir
 
-    def generate_file(self, name, **kargs):
+        config = self.db["instances"][None]["services"]["mailserver"]
+        self.data = {}
+        self.data.update(self.db)
+        self.data.update(config)
+
+    def generate_file(self, name):
         template = "{}/{}.j2".format(self.name, name)
         target = os.path.join(self.rootdir, self.name, name)
 
-        output = self.template_env.get_template(template).render(**kargs)
+        output = self.template_env.get_template(template).render(**self.data)
         # jinja2 seems to sometimes drop the final newline before end of file.
         if not output.endswith("\n"):
             output += "\n"
@@ -40,36 +45,23 @@ class Generate:
         with open(target, "w") as stream:
             stream.write(output)
 
+    def generate(self):
+        for name in self.files:
+            self.generate_file(name)
+
 
 @register
 class PostfixGenerate(Generate):
     service = "mailserver"
     name = "postfix"
-
-    def generate(self):
-        basedir = os.path.join(self.rootdir, "postfix", "etc", "postfix")
-        filename = os.path.join(basedir, "domains")
-
-        utils.makedirs(os.path.dirname(filename))
-        with open(filename, "w") as stream:
-            for item in self.db["domains"].values():
-                print("{id} none".format(**item), file=stream)
+    files = ["main.cf", "domains", "aliases", "clients", "senders"]
 
 
 @register
 class DovecotGenerate(Generate):
     service = "mailserver"
     name = "dovecot"
-
-    def generate(self):
-        basedir = os.path.join(self.rootdir, "dovecot", "etc", "dovecot")
-        filename = os.path.join(basedir, "passwd")
-
-        utils.makedirs(os.path.dirname(filename))
-        with open(filename, "w") as stream:
-            for item in self.db["accounts"].values():
-                if {"domain", "password"}.issubset(item.keys()):
-                    print("{id}@{domain}:{{{password[scheme]}}}{password[data]}".format(**item), file=stream)
+    files = ["dovecot.conf", "passwd"]
 
 
 class WebserverGenerate(Generate):

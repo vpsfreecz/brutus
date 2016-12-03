@@ -1,0 +1,5 @@
+# Sender access list for postfix generated from Brutus database
+
+{% for sender in senders %}
+{{ sender.host }} {{ sender.result }}
+{% endfor %}

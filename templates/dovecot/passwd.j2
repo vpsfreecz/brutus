@@ -1,0 +1,7 @@
+# List of mail users for dovecot generated from Brutus database
+
+{% for name, account in accounts.items() %}
+{% if account.get("mail") %}
+{{ name }}@{{ account.domain }}:{ {{- account.password.scheme }}}{{ account.password.data }}
+{% endif %}
+{% endfor %}

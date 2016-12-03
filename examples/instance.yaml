@@ -3,7 +3,16 @@ id: ~
 services:
     mailserver:
         enabled: yes
-        hostname: example.net
+        hostname: mail.example.net
+        aliases:
+            - old: user@example.com
+              new: user@example.com
+        clients:
+            - host: vpsfree.cz
+              result: OK
+        senders:
+            - source: info@topnabidka.cz
+              result: REJECT Vlezte mi na záda.
     webserver:
         enabled: yes
     dnsserver:

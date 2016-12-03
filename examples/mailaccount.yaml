@@ -4,3 +4,4 @@ domain: example.net
 password:
     scheme: PLAIN
     data: testpassword
+mail: yes

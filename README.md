@@ -7,6 +7,10 @@ as possible. Text formats available for human interaction is be YAML
 or JSON. Machine communication is performed using JSON. Database backend
 is based on the `shelve` python module.
 
+## Supported software
+
+  * Postfix 2.8
+
 ## Developers
 
 Current status: The simplistic database backend works and we are currently

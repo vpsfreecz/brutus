@@ -1,0 +1,45 @@
+protocols = imap sieve
+
+mail_location = maildir:~/mail
+mail_privileged_group = mail
+
+protocol lda {
+    mail_plugins = $mail_plugins sieve
+}
+
+plugin {
+  sieve = ~/.dovecot.sieve
+  sieve_dir = ~/sieve
+}
+
+# Static user pseudo-database
+#
+# http://wiki.dovecot.org/UserDatabase/Static
+
+userdb {
+    driver = static
+    args = uid=vmail gid=vmail home=/var/spool/mail/%d/%n
+}
+
+# Authentication using passwd file
+#
+# http://wiki.dovecot.org/PasswordDatabase
+
+passdb {
+    driver = passwd-file
+    args = scheme=ssha256 /etc/dovecot/passwd
+}
+
+# Authentication service for Postfix
+#
+# http://wiki.dovecot.org/HowTo/PostfixAndDovecotSASL
+
+service auth {
+    unix_listener /var/spool/postfix/private/auth {
+	mode = 0660
+	# Assuming the default Postfix user and group
+	user = postfix
+	group = postfix        
+    }
+}
+auth_mechanisms = plain login
