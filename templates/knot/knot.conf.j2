@@ -25,11 +25,12 @@ template:
   - id: default
     storage: /srv/knot/zones
     dnssec-signing: on
+    dnssec-policy: default
     semantic-checks: on
 
   - id: unsigned
     storage: /srv/knot/zones
-    dnsssec-signing: off
+    dnssec-signing: off
     semantic-checks: on
 
 zone:{% for item in domains %}{% if domains[item].services and domains[item].services.dns and domains[item].services.dns.enabled %}
