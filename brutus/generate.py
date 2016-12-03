@@ -15,7 +15,7 @@ def register(cls):
 
 
 class Generate:
-    template_env = jinja2.Environment(loader=jinja2.FileSystemLoader(searchpath="templates"))
+    template_env = jinja2.Environment(loader=jinja2.FileSystemLoader(searchpath="templates"), trim_blocks=True)
 
     def __init__(self, db, rootdir):
         self.db = db
