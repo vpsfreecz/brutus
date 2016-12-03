@@ -1,0 +1,10 @@
+catalog: instances
+id: ~
+services:
+    mailserver:
+        enabled: yes
+        hostname: example.net
+    webserver:
+        enabled: yes
+    dnsserver:
+        enabled: yes

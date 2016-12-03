@@ -6,6 +6,7 @@ import yaml
 import collections
 
 CATALOGS = [
+    "instances",
     "domains",
     "accounts",
     "websites"
@@ -17,6 +18,9 @@ class Database(collections.Mapping):
 
         for key in CATALOGS:
             self._db.setdefault(key, {})
+        self._db["instances"].setdefault(None, {})
+        self._db["instances"][None]["catalog"] = "instances"
+        self._db["instances"][None].setdefault("services", {})
 
     def add(self, item):
         self._db.setdefault(item['catalog'], {})[item['id']] = item

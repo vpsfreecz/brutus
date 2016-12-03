@@ -24,6 +24,9 @@ class Generate:
 
 @register
 class PostfixGenerate(Generate):
+    service = "mailserver"
+    name = "postfix"
+
     def generate(self):
         basedir = os.path.join(self.rootdir, "postfix", "etc", "postfix")
         filename = os.path.join(basedir, "domains")
@@ -36,6 +39,9 @@ class PostfixGenerate(Generate):
 
 @register
 class DovecotGenerate(Generate):
+    service = "mailserver"
+    name = "dovecot"
+
     def generate(self):
         basedir = os.path.join(self.rootdir, "dovecot", "etc", "dovecot")
         filename = os.path.join(basedir, "passwd")
@@ -49,6 +55,9 @@ class DovecotGenerate(Generate):
 
 @register
 class WebserverGenerate(Generate):
+    service = "webserver"
+    name = "nginx_apache"
+
     def generate(self):
         basedir = os.path.join(self.rootdir)
 
@@ -107,6 +116,9 @@ class WebserverGenerate(Generate):
 
 @register
 class BindGenerate(Generate):
+    service = "dnsserver"
+    name = "bind"
+
     def generate(self):
         basedir = os.path.join(self.rootdir, "bind", "etc", "bind")
 
@@ -132,6 +144,9 @@ class BindGenerate(Generate):
 
 @register
 class KnotGenerate(Generate):
+    service = "dnsserver"
+    name = "knot"
+
     def generate(self):
         basedir = os.path.join(self.rootdir, "knot", "etc", "knot")
         templateLoader = jinja2.FileSystemLoader(searchpath="templates/")
@@ -148,4 +163,8 @@ class KnotGenerate(Generate):
 
 def generate_all(db, rootdir):
     for cls in registered_classes:
+        services = db["instances"][None]["services"]
+        # Skip disabled services
+        if not services.get(cls.service):
+            continue
         cls(db, rootdir).generate()
