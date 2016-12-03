@@ -1,6 +1,6 @@
 #!/usr/bin/python
 
-import os, shutil, subprocess
+import os, shutil, glob, subprocess
 import yaml
 
 from brutus.db import Database
@@ -34,14 +34,9 @@ def test_services():
     cleanup()
 
     with Database(filename) as db:
-        with open("examples/domain.yaml") as stream:
-            db.add(yaml.load(stream))
-        with open("examples/mailaccount.yaml") as stream:
-            db.add(yaml.load(stream))
-        with open("examples/website.yaml") as stream:
-            db.add(yaml.load(stream))
-        with open("examples/website-minimal.yaml") as stream:
-            db.add(yaml.load(stream))
+        for example in glob.glob("examples/*.yaml"):
+            with open(example) as stream:
+                db.add(yaml.load(stream))
 
         generate_all(db, rootdir)
 
