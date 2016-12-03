@@ -1,6 +1,9 @@
 #!/usr/bin/python
 
-from __future__ import print_function
+from __future__ import print_function, unicode_literals
+
+# Python 2.x tweak
+from io import open
 
 import os
 import jinja2
