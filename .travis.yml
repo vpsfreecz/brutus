@@ -1,24 +1,9 @@
 language: python
-sudo: required
 dist: trusty
-addons:
-    apt:
-        packages:
-            - nginx
-            - apache2
-    hosts:
-        - example.net
-        - mini.example.net
-        - www.example.net
 python:
   - "2.7"
   - "3.4"
   - "3.5"
-env:
-    -  SERVER=nginx
-    -  SERVER=apache
-    -  SERVER=
-# command to install dependencies
 install: "pip install -r requirements.txt"
 # command to run tests
-script: tests/run-travis.sh
+script: nosetests
