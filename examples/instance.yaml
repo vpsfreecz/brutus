@@ -1,5 +1,6 @@
 catalog: instances
 id: ~
+admin_mail: admin@example.net
 services:
     mailserver:
         enabled: yes
@@ -7,4 +8,6 @@ services:
     webserver:
         enabled: yes
     dnsserver:
+        enabled: yes
+    certificates:
         enabled: yes

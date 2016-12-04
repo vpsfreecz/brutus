@@ -18,8 +18,22 @@ log:
 remote:
 
 key:
+{% for item in domains %}
+{% if domains[item].services and domains[item].services.dns and domains[item].tsigid %}
+  - id: {{ domains[item].tsigid }}
+    algorithm: hmac-sha256
+    secret: {{ domains[item].tsigsecret }}
+{% endif %}
+{% endfor %}
 
 acl:
+{% for item in domains %}
+{% if domains[item].services and domains[item].services.dns and domains[item].tsigid %}
+  - id: {{ domains[item].aclid }}
+    key: {{ domains[item].tsigid }}
+    action: update
+{% endif %}
+{% endfor %}
 
 template:
   - id: default
@@ -33,10 +47,14 @@ template:
     dnssec-signing: off
     semantic-checks: on
 
-zone:{% for item in domains %}{% if domains[item].services and domains[item].services.dns and domains[item].services.dns.enabled %}
-  - domain: {{item}}{% if domains[item].services.dns.dnssec %}
-    template: default{% else %}
+zone:
+{% for item in domains %}
+{% if domains[item].services and domains[item].services.dns and domains[item].services.dns.enabled %}
+  - domain: {{item}}
+{% if domains[item].services.dns.dnssec %}
+    template: default
+{% else %}
     template: unsigned
 {% endif %}
 {% endif %}
-{% endfor%}
+{% endfor %}

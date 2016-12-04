@@ -1,0 +1,27 @@
+[acmednstiny]
+# Required readable ACME account key
+AccountKeyFile = /srv/letsencrypt/account.key
+# Required readable CSR file
+CSRFile = /srv/letsencrypt/{{ domain }}.csr
+# Optional ACME directory url (default: https://acme-staging.api.letsencrypt.org/directory)
+ACMEDirectory = {{ acme_dir }}
+# Optional time in seconds to wait between DNS update and challenge check (default: 3)
+CheckChallengeDelay = 3
+# Optional Contact info to send to the ACME provider
+MailContact = {{ admin_mail }}
+
+[TSIGKeyring]
+# Required TSIG key name
+KeyName = {{ tsigid }}
+# Required TSIG key value in base64
+KeyValue = {{ tsigsecret }}
+# Required TSIG algorithm
+Algorithm = hmac-sha256
+
+[DNS]
+# Required name of zone to update
+Zone = {{ domain }}
+# Required name or IP of DNS server
+Host = {{ dns }}
+# Optional port to connect on DNS server (default: 53)
+Port = 53
