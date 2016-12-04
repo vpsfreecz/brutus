@@ -1,0 +1,9 @@
+id:
+name:
+root:
+tls: letsencrypt
+tls_params:
+php: false
+headers:
+locations:
+http2: true

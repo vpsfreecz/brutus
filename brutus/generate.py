@@ -4,10 +4,12 @@ from __future__ import print_function
 
 import os
 import jinja2
+import yaml
 
 from . import utils
 
 registered_classes = []
+
 
 def register(cls):
     registered_classes.append(cls)
@@ -53,65 +55,66 @@ class DovecotGenerate(Generate):
                     print("{id}@{domain}:{{{password[scheme]}}}{password[data]}".format(**item), file=stream)
 
 
-@register
 class WebserverGenerate(Generate):
     service = "webserver"
-    name = "nginx_apache"
 
-    def generate(self):
+    def load_defaults(self):
+        with open('defaults/webserver.yaml') as stream:
+            return yaml.safe_load(stream)
+
+    def generate(self, site_template, output_dir, conf_files, conf_dir):
         basedir = os.path.join(self.rootdir)
 
-        platforms = [ 'nginx', 'apache' ];
-        template = {};
-
-        for platform in platforms:
-            template[platform] = self.template_env.get_template(platform + '/site.conf.j2')
-
-        defaults = {
-            "id": None,
-            "name": None,
-            "root": None,
-            "tls": "letsencrypt",
-            "tls_params": None,
-            "php": "false",
-            "headers": None,
-            "locations": None,
-            "http2": "true",
-        }
-
+        template = self.template_env.get_template(site_template)
         for item in self.db["websites"].values():
-            variables = defaults.copy()
+            variables = self.load_defaults()
             variables.update(item)
 
             # set defaults
             variables['id'] = variables['domain'] if variables['id'] is None else variables['id']
             variables['name'] = variables['id'] if variables['name'] is None else variables['name']
-            variables['root'] = "/srv/www/" + variables['domain'] + "/" + variables['id'] + "/www" if variables['root'] is None else variables['root']
+            variables['root'] = "/srv/www/" + variables['domain'] + "/" + variables['id'] + "/www" \
+                if variables['root'] is None else variables['root']
 
-            for platform in platforms:
-                filename = os.path.join(basedir, platform, "etc", platform, 'conf.d',  item['id'] + ".conf")
-                utils.makedirs(os.path.dirname(filename))
-                with open(filename, "w") as stream:
-                    output = template[platform].render(variables)
-                    print(output, file=stream)
+            filename = os.path.join(basedir, self.name, output_dir,  item['id'] + ".conf")
+            utils.makedirs(os.path.dirname(filename))
+            with open(filename, "w") as stream:
+                output = template.render(variables)
+                print(output, file=stream)
 
-        # copy over configuration files
-        configs = {}
-        configs['nginx'] = [ 'nginx.conf', 'fastcgi_params' ]
-        configs['apache'] = [ 'apache2.conf']
-
-        # TODO: load global configuration variables from storage
-        variables = {}
-
-        for platform in platforms:
-            for configfile in configs[platform]:
-                templ = self.template_env.get_template(os.path.join(platform, configfile + ".j2"))
-                filename = os.path.join(basedir, platform, "etc", platform, configfile)
+            for configfile in conf_files:
+                templ = self.template_env.get_template(os.path.join(self.name, configfile + ".j2"))
+                filename = os.path.join(basedir, self.name, conf_dir, configfile)
                 utils.makedirs(os.path.dirname(filename))
                 with open(filename, "w") as stream:
                     output = templ.render(variables)
                     print(output, file=stream)
 
+
+@register
+class NginxGenerate(WebserverGenerate):
+    name = "nginx"
+
+    def generate(self):
+        site_template = "nginx/site.conf.j2"
+        output_dir = "etc/nginx/conf.d"
+        conf_files = ["nginx.conf", "fastcgi_params"]
+        conf_dir = "etc/nginx"
+
+        return WebserverGenerate.generate(self, site_template, output_dir, conf_files, conf_dir)
+
+
+@register
+class ApacheGenerate(WebserverGenerate):
+    name = "apache"
+
+    def generate(self):
+        site_template = "apache/site.conf.j2"
+        output_dir = "etc/apache/conf.d"
+        conf_files = ["apache2.conf"]
+        conf_dir = "etc/apache"
+
+        return WebserverGenerate.generate(self, site_template, output_dir, conf_files, conf_dir)
 
 
 @register
@@ -149,7 +152,6 @@ class KnotGenerate(Generate):
 
     def generate(self):
         basedir = os.path.join(self.rootdir, "knot", "etc", "knot")
-        templateLoader = jinja2.FileSystemLoader(searchpath="templates/")
 
         template = self.template_env.get_template('knot/knot.conf.j2')
         variables = {}
