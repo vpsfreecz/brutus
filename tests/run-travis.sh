@@ -26,10 +26,12 @@ if [ "$SERVER" == "apache" ]; then
     sudo /etc/init.d/apache2 start || ((FAILED++))
 fi
 
-echo "Testing example.net"
-curl -v http://example.net/ || ((FAILED++))
-echo "Testing mini.example.net"
-curl -v http://mini.example.net/ || ((FAILED++))
+if [ "$SERVER" != "" ]; then
+    echo "Testing example.net"
+    curl -v http://example.net/ || ((FAILED++))
+    echo "Testing mini.example.net"
+    curl -v http://mini.example.net/ || ((FAILED++))
+fi
 
 echo "Failed tests: $FAILED"
 exit $FAILED
