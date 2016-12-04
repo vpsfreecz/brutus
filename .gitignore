@@ -1,4 +1,7 @@
-/db.shelve
-/test.shelve
+/db.shelve*
+/test.shelve*
+/output
+/tmp
 
 __pycache__
+/tests/__pycache__
