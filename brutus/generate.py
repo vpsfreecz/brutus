@@ -5,6 +5,7 @@ from __future__ import print_function
 import os
 import jinja2
 import yaml
+import base64
 
 from . import utils
 
@@ -19,9 +20,10 @@ def register(cls):
 class Generate:
     template_env = jinja2.Environment(loader=jinja2.FileSystemLoader(searchpath="templates"), trim_blocks=True)
 
-    def __init__(self, db, rootdir):
+    def __init__(self, db, rootdir, generate_keys):
         self.db = db
         self.rootdir = rootdir
+        self.generate_keys = generate_keys
 
 
 @register
@@ -154,8 +156,19 @@ class KnotGenerate(Generate):
         basedir = os.path.join(self.rootdir, "knot", "etc", "knot")
 
         template = self.template_env.get_template('knot/knot.conf.j2')
+
+        # for LE
+        for domain in self.db['domains']:
+            if 'tsigid' not in self.db["domains"][domain]:
+                self.db["domains"][domain]["tsigid"] = domain + ".LE.KEY"
+                self.db["domains"][domain]["aclid"] = domain + ".LE.ACL"
+                randomtext = os.urandom(int(int(256)/8))
+                tsigsecret = base64.b64encode(randomtext).decode("utf-8")
+                self.db["domains"][domain]["tsigsecret"] = tsigsecret if self.generate_keys else ""
+
         variables = {}
         variables['domains'] = self.db["domains"]
+
         filename = os.path.join(basedir, "knot.conf")
         utils.makedirs(os.path.dirname(filename))
         with open(filename, "w") as stream:
@@ -163,10 +176,37 @@ class KnotGenerate(Generate):
             print(output, file=stream)
 
 
-def generate_all(db, rootdir):
+@register
+class LetsencryptGenerate(Generate):
+    """
+    How should it work?
+    """
+
+    service = "certificates"
+    name = "letsencrypt"
+
+    def generate(self):
+        basedir = os.path.join(self.rootdir, self.name, "etc", "letsencrypt", "configuration")
+        template = self.template_env.get_template('letsencrypt/le.ini.j2')
+        for name, value in sorted(self.db["domains"].items()):
+            if ('dns' not in value['services']) or ('tsigsecret' not in value):
+                continue
+            variables = {
+                'domain': name,
+                'tsigid': value['tsigid'],
+                'tsigsecret': value['tsigsecret'] if self.generate_keys else "",
+            }
+            filename = os.path.join(basedir, name + ".ini")
+            utils.makedirs(os.path.dirname(filename))
+            with open(filename, "w") as stream:
+                output = template.render(variables)
+                print(output, file=stream)
+
+
+def generate_all(db, rootdir, generate_keys=True):
     for cls in registered_classes:
         services = db["instances"][None]["services"]
         # Skip disabled services
         if not services.get(cls.service):
             continue
-        cls(db, rootdir).generate()
+        cls(db, rootdir, generate_keys).generate()

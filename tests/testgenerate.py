@@ -38,6 +38,6 @@ def test_services():
             with open(example) as stream:
                 db.add(yaml.load(stream))
 
-        generate_all(db, rootdir)
+        generate_all(db, rootdir, generate_keys=False)
 
     subprocess.check_call(["diff", "-ru", rootdir, "tests/output"])

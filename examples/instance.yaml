@@ -8,3 +8,5 @@ services:
         enabled: yes
     dnsserver:
         enabled: yes
+    certificates:
+        enabled: yes
