@@ -1,6 +1,7 @@
 import os
 import argparse
 import yaml
+import datetime
 
 from .utils import makedirs, symlink
 
@@ -17,6 +18,9 @@ def make_symlinks(target_dir, source_dir=os.path.realpath("./output")):
                 source = os.path.join(source_dir, name, links["source"])
                 target = os.path.join(os.path.realpath(target_dir), links["target"].lstrip("/"))
                 makedirs(os.path.dirname(target))
+                if os.path.exists(target) and not os.path.islink(target):
+                    suffix = datetime.datetime.now().strftime(".%Y%m%d%H%M%S")
+                    os.rename(target, target + suffix)
                 symlink(source, target)
 
 def main():
