@@ -51,7 +51,7 @@ class DatabaseCLI:
 
         add = subparsers.add_parser('add', help="Initialize database.")
         add.set_defaults(command='add')
-        add.add_argument('filename', help="YAML file")
+        add.add_argument('filenames', nargs="*", help="YAML file")
 
         dump = subparsers.add_parser('dump', help="Initialize database.")
         dump.set_defaults(command='dump')
@@ -60,7 +60,8 @@ class DatabaseCLI:
 
         with Database("db.shelve") as db:
             if options.command == 'add':
-                with open(options.filename) as stream:
-                    db.add(yaml.safe_load(stream))
+                for filename in options.filenames:
+                    with open(filename) as stream:
+                        db.add(yaml.safe_load(stream))
             if options.command == 'dump':
                 print(yaml.dump(dict(db)))
