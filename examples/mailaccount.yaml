@@ -5,3 +5,4 @@ password:
     scheme: PLAIN
     data: testpassword
 mail: yes
+jabber: yes

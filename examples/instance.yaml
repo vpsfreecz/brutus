@@ -13,6 +13,8 @@ services:
         senders:
             - source: info@topnabidka.cz
               result: REJECT Vlezte mi na záda.
+    jabber:
+        enabled: yes
     webserver:
         enabled: yes
     dnsserver:

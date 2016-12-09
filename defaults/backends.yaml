@@ -17,3 +17,8 @@ mailserver:
               target: /etc/dovecot/dovecot.conf
             - source: passwd
               target: /etc/dovecot/passwd
+jabber:
+    prosody:
+        links:
+            - source: prosody.cfg.lua
+              target: /etc/jabber/prosody.cfg.lua

@@ -64,6 +64,13 @@ class DovecotGenerate(Generate):
     files = ["dovecot.conf", "passwd"]
 
 
+@register
+class ProsodyGenerate(Generate):
+    service = "jabber"
+    name = "prosody"
+    files = ["prosody.cfg.lua"]
+
+
 class WebserverGenerate(Generate):
     service = "webserver"
 
